@@ -16,6 +16,11 @@ dependencies = [
     "pytest>=8.2.1",
 ]
 
+[project.optional-dependencies]
+test = [
+    "ruff==0.4.6",
+]
+
 [project.urls]
 Homepage = "https://github.com/pypa/sampleproject"
 Issues = "https://github.com/pypa/sampleproject/issues"
@@ -33,3 +38,19 @@ markers = [
 
 [project.entry-points.pytest11]
 pytest_topo = "pytest_topo.plugin"
+
+[tool.ruff.lint]
+select = [
+    # pycodestyle
+    "E",
+    # Pyflakes
+    "F",
+    # pyupgrade
+    "UP",
+    # flake8-bugbear
+    "B",
+    # flake8-simplify
+    "SIM",
+    # isort
+    "I",
+]

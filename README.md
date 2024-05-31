@@ -1,5 +1,4 @@
 ## Install
-
 ```bash
 pip install pytest-topo
 ```
@@ -8,7 +7,6 @@ The pytest-topo library offers a topological ordering feature for pytest tests, 
 Please note that this library is not recommended for unit tests, as unit tests should ideally be independent of each other.
 
 ## Usage Examples
-
 To sequence your tests, apply the `dependency` and `depends_on` markers.
 
 ```python
@@ -48,7 +46,6 @@ def test_two(my_fixture):
 ```
 
 ## Motivation
-
 Consider software where customers register with an `account` API, and submit purchases to a `purchases` API. These are two services with API tests that could look like this:
 
 ```
@@ -61,4 +58,4 @@ tests
     - ...
 ```
 
-The `purchases` tests may run a pre-test setup to create an account, execute tests, then run a post-test teardown. If there is an issue in the account creation or deletion, all these tests will error. By adding dependencies, the `purchases` tests will be skipped, reducing test failure noise.
+The `purchases` tests may run a pre-test setup to create an account, execute tests, then run a post-test teardown. If there is an issue in the account creation or deletion, all these tests will error. By adding dependency links, the `purchases` tests will be skipped, reducing test failure noise.

@@ -35,6 +35,7 @@ def order_by_dependency(items: List[Item]) -> None:
 
 
 def topological_sort(source: Dict[str, List[Item]]):
+    # This is blatantly stolen from stack overflow
     # copy deps so we can modify set in-place
     pending = [(name, set(deps)) for name, deps in source.items()]
     emitted = []
@@ -56,9 +57,7 @@ def topological_sort(source: Dict[str, List[Item]]):
 
         # all entries have unmet deps, one of two things is wrong...
         if not next_emitted:
-            raise ValueError(
-                "cyclic or missing dependancy detected: %r" % (next_pending,)
-            )
+            raise ValueError(f"cyclic or missing dependancy detected: {next_pending!r}")
         pending = next_pending
         emitted = next_emitted
 
