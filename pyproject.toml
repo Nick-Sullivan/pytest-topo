@@ -1,6 +1,6 @@
 [project]
 name = "pytest-topo"
-version = "0.0.2"
+version = "0.0.3"
 authors = [
   { name="Nick Sullivan", email="nick.dave.sullivan@gmail.com" },
 ]
@@ -13,11 +13,7 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
-]
-
-[project.optional-dependencies]
-test = [
-    "pytest==8.2.1",
+    "pytest>=8.2.1",
 ]
 
 [project.urls]
@@ -30,5 +26,10 @@ build-backend = "hatchling.build"
 
 [tool.pytest.ini_options]
 pythonpath = "src"
+markers = [
+    "dependency",
+    "depends_on",
+]
 
-
+[project.entry-points.pytest11]
+pytest_topo = "pytest_topo.plugin"
