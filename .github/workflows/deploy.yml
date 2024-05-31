@@ -17,11 +17,11 @@ jobs:
           python-version: "3.11"
 
       - name: Install dependencies
-        run: pip install .
+        run: pip install .[test]
 
       - name: Check linter
         run: ruff check
-        
+
       - name: Run tests
         run: pytest
 
