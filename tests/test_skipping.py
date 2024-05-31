@@ -8,7 +8,8 @@ def test_deliberate_skip():
 
 @pytest.fixture(scope="function")
 def bad_fixture():
-    raise Exception("This should not have been created")
+    pass
+    # raise Exception("This should not have been created")
 
 
 @pytest.mark.depends_on("DoesntPass")

@@ -1,10 +1,12 @@
-from typing import Dict
+from typing import Dict, List
+
+from pytest import Item
 
 failures = set()
 func_name_map = {}
 
 
-def order_by_dependency(items: Dict):
+def order_by_dependency(items: List[Item]) -> None:
     for item in items:
         mark = item.get_closest_marker("dependency")
         if not mark:
@@ -32,7 +34,7 @@ def order_by_dependency(items: Dict):
     items[:] = new_items
 
 
-def topological_sort(source):
+def topological_sort(source: Dict[str, List[Item]]):
     # copy deps so we can modify set in-place
     pending = [(name, set(deps)) for name, deps in source.items()]
     emitted = []
@@ -61,11 +63,11 @@ def topological_sort(source):
         emitted = next_emitted
 
 
-def mark_as_failure(item):
+def mark_as_failure(item: Item):
     failures.add(item.nodeid)
 
 
-def should_skip(item):
+def should_skip(item: Item) -> bool:
     mark = item.get_closest_marker("depends_on")
     if not mark:
         return False
