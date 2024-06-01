@@ -26,12 +26,12 @@ def test_two():
     # This test is executed second
 ```
 
-If any of the dependent tests do not pass, they will not be skipped. This will also skip any fixture creation, if there are no remaining tests that need to use them.
+A test will be skipped if any of their dependencies do not pass. This will also skip any fixture creation if there are no remaining tests that need to use them.
 
 ```python
 import pytest
 
-@pytest.mark.dependency("DoesntPass")
+@pytest.mark.dependency("Fail")
 def test_one():
     assert False  # force a failure
 
@@ -39,7 +39,7 @@ def test_one():
 def my_fixture():
     # This fixture is never created
 
-@pytest.mark.depends_on("DoesntPass")
+@pytest.mark.depends_on("Fail")
 def test_two(my_fixture):
     # This test will be skipped
 
