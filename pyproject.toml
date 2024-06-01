@@ -1,6 +1,6 @@
 [project]
 name = "pytest-topo"
-version = "0.0.5"
+version = "0.0.6"
 authors = [
   { name="Nick Sullivan", email="nick.dave.sullivan@gmail.com" },
 ]
