@@ -1,6 +1,6 @@
 [project]
 name = "pytest-topo"
-version = "0.0.7"
+version = "1.0.0"
 authors = [
   { name="Nick Sullivan", email="nick.dave.sullivan@gmail.com" },
 ]
@@ -18,7 +18,7 @@ dependencies = [
 
 [project.optional-dependencies]
 test = [
-    "ruff==0.4.6",
+    "ruff>=0.4.6",
 ]
 
 [project.urls]
