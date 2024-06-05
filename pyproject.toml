@@ -14,6 +14,7 @@ classifiers = [
 ]
 dependencies = [
     "pytest>=7.0.0",
+    "networkx>=2.5",
 ]
 
 [project.optional-dependencies]

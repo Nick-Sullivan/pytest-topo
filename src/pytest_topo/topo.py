@@ -1,5 +1,6 @@
-from typing import Dict, List
+from typing import List
 
+import networkx as nx
 from pytest import Item
 
 failures = set()
@@ -7,25 +8,8 @@ func_name_map = {}
 
 
 def order_by_dependency(items: List[Item]) -> None:
-    for item in items:
-        mark = item.get_closest_marker("dependency")
-        if not mark:
-            continue
-        for name in mark.args:
-            assert name not in func_name_map, f"Duplicate dependency name found: {name}"
-            func_name_map[name] = item.nodeid
-
-    dependencies = {}
-    for item in items:
-        dependencies[item.nodeid] = []
-        mark = item.get_closest_marker("depends_on")
-        if not mark:
-            continue
-        for dep in mark.args:
-            func_name = func_name_map[dep]
-            dependencies[item.nodeid].append(func_name)
-
-    new_order = list(topological_sort(dependencies))
+    graph = create_graph(items)
+    new_order = list(nx.topological_sort(graph))
 
     new_items = []
     for func_name in new_order:
@@ -34,35 +18,28 @@ def order_by_dependency(items: List[Item]) -> None:
     items[:] = new_items
 
 
-def topological_sort(source: Dict[str, List[Item]]):
-    # This is blatantly stolen from stack overflow
-    # copy deps so we can modify set in-place
-    pending = [(name, set(deps)) for name, deps in source.items()]
-    emitted = []
-    while pending:
-        next_pending = []
-        next_emitted = []
-        for entry in pending:
-            name, deps = entry
-            deps.difference_update(emitted)  # remove deps we emitted last pass
-            # still has deps? recheck during next pass
-            if deps:
-                next_pending.append(entry)
-            else:
-                yield name
-                # not required, but helps preserve original ordering
-                emitted.append(name)
-                # remember what we emitted for difference_update() in next pass
-                next_emitted.append(name)
+def create_graph(items: List[Item]) -> nx.DiGraph:
+    graph = nx.DiGraph()
 
-        # all entries have unmet deps, one of two things is wrong...
-        if not next_emitted:
-            raise ValueError(f"cyclic or missing dependancy detected: {next_pending!r}")
-        pending = next_pending
-        emitted = next_emitted
+    for item in items:
+        mark = item.get_closest_marker("dependency")
+        if not mark:
+            continue
+        graph.add_node(item.nodeid)
+        for name in mark.args:
+            assert name not in func_name_map, f"Duplicate dependency name found: {name}"
+            func_name_map[name] = item.nodeid
+
+    for item in items:
+        mark = item.get_closest_marker("depends_on")
+        if not mark:
+            continue
+        for name in mark.args:
+            graph.add_edge(func_name_map[name], item.nodeid)
+    return graph
 
 
-def mark_as_failure(item: Item):
+def mark_as_failure(item: Item) -> None:
     failures.add(item.nodeid)
 
 

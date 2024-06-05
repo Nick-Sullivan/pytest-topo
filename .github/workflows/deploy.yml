@@ -26,8 +26,14 @@ jobs:
       - name: Check linter
         run: ruff check
 
-      - name: Run tests
-        run: pytest
+      - name: Run sequential tests
+        run: pytest tests/sequential
+
+      - name: Install xdist
+        run: pip install pytest-xdist
+
+      - name: Run parallel tests
+        run: pytest tests/parallel -n 4 --dist loadscope
 
   build:
     runs-on: ubuntu-latest
