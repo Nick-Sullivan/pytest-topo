@@ -59,3 +59,26 @@ tests
 ```
 
 The `purchases` tests may run a pre-test setup to create an account, execute tests, then run a post-test teardown. If there is an issue in the account creation or deletion, all these tests will error. By adding dependency links, the `purchases` tests will be skipped, reducing test failure noise.
+
+## Parallel tests
+There is some support for operating with `pytest-xdist`. When using the `--dist loadgroup` option, groups of connected tests will register as independent load groups. For example, when running the following tests with `pytest-xdist` installed and with the command `pytest -n 2 --dist loadgroup`, it will run two workers in parallel:
+
+```python
+import pytest
+
+@pytest.mark.dependency("A-1")
+def test_a_one():
+    # Runs on worker A
+
+@pytest.mark.depends_on("A-1")
+def test_a_two():
+    # Runs on worker A
+
+@pytest.mark.dependency("B-1")
+def test_b_one():
+    # Runs on worker B
+
+@pytest.mark.depends_on("B-1")
+def test_b_two():
+    # Runs on worker B
+```

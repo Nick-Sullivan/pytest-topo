@@ -7,7 +7,11 @@
         }
     },
     "python.testing.pytestArgs": [
-        "tests"
+        "tests",
+        "-n",
+        "4",
+        "--dist",
+        "loadgroup",
     ],
     "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true,

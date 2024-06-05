@@ -1,15 +1,18 @@
 from typing import List
 
-import networkx as nx
 import pytest
 from pytest import Config, Item, Session
 
-from .topo import create_graph, mark_as_failure, order_by_dependency, should_skip
+from .topo import TopologicalTestSorter
+
+sorter: TopologicalTestSorter
 
 
-@pytest.hookimpl
+@pytest.hookimpl(tryfirst=True)
 def pytest_collection_modifyitems(session: Session, config: Config, items: List[Item]):
-    order_by_dependency(items)
+    global sorter
+    sorter = TopologicalTestSorter(items)
+    items[:] = sorter.get_ordered_items()
 
     # Group tests for parallel execution
     try:
@@ -17,8 +20,7 @@ def pytest_collection_modifyitems(session: Session, config: Config, items: List[
     except ValueError:
         return
 
-    graph = create_graph(items)
-    groups = list(nx.weakly_connected_components(graph))
+    groups = sorter.get_groups()
     for item in items:
         for i, group in enumerate(groups):
             if item.nodeid in group:
@@ -28,8 +30,8 @@ def pytest_collection_modifyitems(session: Session, config: Config, items: List[
 
 @pytest.hookimpl
 def pytest_runtest_protocol(item: Item, nextitem: Item):
-    if should_skip(item):
-        mark_as_failure(item)
+    if sorter.should_skip(item):
+        sorter.mark_as_failure(item)
         item.add_marker(pytest.mark.skip())
 
 
@@ -37,4 +39,4 @@ def pytest_runtest_protocol(item: Item, nextitem: Item):
 def pytest_runtest_call(item: Item):
     output = yield
     if output is not None and output.exception:
-        mark_as_failure(item)
+        sorter.mark_as_failure(item)

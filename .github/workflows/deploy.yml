@@ -33,7 +33,7 @@ jobs:
         run: pip install pytest-xdist
 
       - name: Run parallel tests
-        run: pytest tests/parallel -n 4 --dist loadscope
+        run: pytest tests/parallel -n 4 --dist loadgroup
 
   build:
     runs-on: ubuntu-latest
